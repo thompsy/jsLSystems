@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Test</title>
+        
+        
+        <!-- JQuery stuff -->
+		<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>
+		<style type="text/css">
+			/*demo page css*/
+			body{ font: 100% "Trebuchet MS", sans-serif;}
+            
+            html, body {
+
+            }
+            
+            #canvas {
+            	padding: 0;
+            	margin: 0;
+            }
+
+		</style>
+        
+        <!-- Canvas Stuff -->
+        <script type="text/javascript" src="code.js"></script>
+        <script type="text/javascript" src="lsystem.js"></script>
+        <script>
+        
+
+
+            $(function() {
+                $("#dialog").dialog({
+                    width: 500,
+                    closeOnEscape: false,
+                    position: [100,100], 
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); }
+                });
+
+            });
+            
+            
+            $(function() {
+                $("#canvas-dialog").dialog({
+                    width: 900,
+                    height: 700,
+                    closeOnEscape: false,
+                    position: [500,100], 
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide()},
+                    resize: function(event, ui) { onResize(ui.size); }
+                });
+
+            });
+        </script>
+        
+        <style>
+            #demo-frame > div.demo { padding: 10px !important; }
+        </style>
+        <script>
+            
+            $(function() {
+                $( "#slider" ).slider({
+                    max: 12,
+                    min: 0,
+                    step: 1,
+                    slide: function(event, ui) {onSliderChange(ui.value);}
+                });
+            });
+
+
+        </script>
+
+	</head>
+    
+    
+	<body onload="init();">
+    
+        <div id="canvas-dialog" title="L-Systems">
+            <canvas id="canvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div id="dialog" title="L-Systems">
+                <label for="lsystem">L-Systems</label>
+                <select id="lsystem" onChange="onLSystemChange();">
+                    <option value="1">Koch curve</option>
+                    <option value="2">Sierpinski triangle</option>
+                    <option value="3">Dragon curve</option>
+                    <option value="4">Fractal Plant</option>
+                    <option value="5">Custom</option>
+                </select></br>
+                
+                <label for="length">Length</label>
+                <input type="text" value="5" id="length"/><br/>
+                
+                <label for="iterations">Iterations</label>
+                <input type="text" value="0" id="iterations"/><br/>
+                <input type="hidden" value="10" id="max_iterations"/>
+                <div id="slider"></div>
+                
+                <!--<label for="angle">Angle</label>-->
+                <input type="text" value="90" id="angle"/><br/>
+                <input type="hidden" value="90" id="starting_angle"/>
+                
+                <input type="hidden" value="90" id="x"/>
+                <input type="hidden" value="850" id="y"/>
+
+                <label for="init_string">Initial String</label>
+                <input type="text" value="F" id="initial_string" size="10"/><br/>
+                
+                
+                
+                <!--<label for="current_string">Current String</label>-->
+                <input type="hidden" value="" id="current_string" size="100"/><br/>
+                
+                <div id="rules">
+                    <label for="rule1">Rule 1</label><input type="text" value="F F+F-F-F+F" id="rule1" size="30"/><br/>
+                </div>
+                
+                <!--
+                <button onClick="add_rule();">Add Rule</button>
+                <button onClick="onResetButtonPress();">Reset</button>
+                <button onClick="onIterateButtonPress();">Iterate</button>
+                -->
+                
+                <button onClick="onStartButtonPress();">Draw</button><br/>
+                
+
+        </div>
+
+        
+    </body>
+</html>
+
+
