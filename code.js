@@ -1,139 +1,127 @@
 var lsys;
 
-
+/*
+ * Convert a value in degrees into radians.
+ */
 function degToRad(deg) {
     return deg * Math.PI/180;
 }
 
-
-function Rule(string) {
-    res = string.split(" ");
-    this.target = res[0];
-    this.pattern = res[1];
+/*
+ * A simple class to encapsulate a rule which is composed of target
+ * character and a pattern with which to replace the target.
+ */
+function Rule(rule_id) {
+    this.target = $('#rule'+rule_id+'_target').val();
+    this.pattern = $('#rule'+rule_id+'_pattern').val();
 }
-
-
 
 
 /*
  * Event Handlers.
  */
-function onIterateButtonPress() {
-    lsys.draw(15);
-}
-
-
-function onResetButtonPress() {
-    reset();
-}
-
-
 function onStartButtonPress() {
-	clear_canvas();
-	lsys.get_params();
+    clear_canvas();
+    lsys.get_params();
     lsys.draw_iteration(getSliderValue());
-    
-    
-}
-
-function onSliderChange(value) {
-    document.getElementById("iterations").value = value;
 }
 
 function onResize(ui) {
-	
-	x = ui.width;
-	y = ui.height;
-	
-	canvas = document.getElementById("canvas");
+    x = ui.width;
+    y = ui.height;
+
+    canvas = document.getElementById("canvas");
     canvas.width  = x - 100;
     canvas.height = y - 100;
-    
 
-	onLSystemChange();
+    onLSystemChange();
 }
 
+function onWindowResize() {
+    y = $(window).height();
+    x = $(window).width();
+
+    canvas.height = y;
+    canvas.width = x;
+}
+
+
 function getSliderValue() {
-	return $("#slider").slider("option", "value");
+    return $("#iterations").slider("option", "value");
 }
 
 
 /*
  * Fill in the relevant form values for a given L-System.
  */
+//TODO: set better slider steps
 function onLSystemChange() {
 
     choice = parseInt(document.getElementById("lsystem").value);
     canvas = document.getElementById("canvas");
-    
+
     // Koch curve
     if(choice == 1) {
-        document.getElementById("length").value = "5";
-        document.getElementById("angle").value = "90";
-        document.getElementById("starting_angle").value = "90";
+	$('#length').slider("value", "5");
+	$('#angle').slider("value", "90");
+	$('#starting_angle').slider("value", "90");
+
         document.getElementById("initial_string").value = "F";
         document.getElementById("current_string").value = "F";
-        document.getElementById("x").value = 10;
-        document.getElementById("y").value = canvas.height - 10;
         document.getElementById("max_iterations").value = "5";
-        $("#slider").slider("option", "max", 10);
-        
+
         remove_rules();
-        add_rule("F F+F-F-F+F");
+        add_rule("F", "F+F-F-F+F");
     }
-    
+
     // Sierpinski triangle
     if(choice == 2) {
-        document.getElementById("length").value = "3";
-        document.getElementById("angle").value = "60";
-        document.getElementById("starting_angle").value = "90";
+	$('#length').slider("value", "3");
+	$('#angle').slider("value", "60");
+	$('#starting_angle').slider("value", "90");
+
         document.getElementById("initial_string").value = "A";
         document.getElementById("current_string").value = "A";
-        document.getElementById("x").value = 10;
-        document.getElementById("y").value = canvas.height - 10;
         document.getElementById("max_iterations").value = "6";
+
         $("#slider").slider("option", "max", 12);
         $("#slider").slider("option", "step", 2);
-        
+
         remove_rules();
-        add_rule("A B-A-B");
-        add_rule("B A+B+A");
+        add_rule("A", "B-A-B");
+        add_rule("B", "A+B+A");
     }
-    
+
     // Dragon curve
     if(choice == 3) {
-        document.getElementById("length").value = "3";
-        document.getElementById("angle").value = "90";
-        document.getElementById("starting_angle").value = "90";
+	$('#length').slider("value", "3");
+	$('#angle').slider("value", "90");
+	$('#starting_angle').slider("value", "90");
+
         document.getElementById("initial_string").value = "FX";
         document.getElementById("current_string").value = "FX";
-        document.getElementById("x").value = canvas.width / 2;
-        document.getElementById("y").value = canvas.height / 2;
         document.getElementById("max_iterations").value = "15";
-        $("#slider").slider("option", "max", 20);
-        
+
         remove_rules();
-        add_rule("X X+YF");
-        add_rule("Y FX-Y");
+        add_rule("X", "X+YF");
+        add_rule("Y", "FX-Y");
     }
     // Fractal Plant
     if(choice == 4) {
-        document.getElementById("length").value = "1";
-        document.getElementById("angle").value = "25";
-        document.getElementById("starting_angle").value = "170";
+	$('#length').slider("value", "1");
+	$('#angle').slider("value", "25");
+	$('#starting_angle').slider("value", "170");
+
         document.getElementById("initial_string").value = "X";
         document.getElementById("current_string").value = "X";
-        document.getElementById("x").value = 100;
-        document.getElementById("y").value = canvas.height - 10;
         document.getElementById("max_iterations").value = "11";
-        //$("#slider").slider("option", "max", 11);
-        
+
         remove_rules();
-        add_rule("F FF");
-        add_rule("X F-[[X]+X]+F[+FX]-X");
-        //add_rule("X F-[F-F]");
+        add_rule("F", "FF");
+        add_rule("X", "F-[[X]+X]+F[+FX]-X");
+        //add_rule("X", "F-[F-F]");
     }
-    
+
     lsys.get_params();
     reset();
 }
@@ -141,22 +129,23 @@ function onLSystemChange() {
 
 
 function new_lsystem() {
-	if (canvas.getContext("2d")) {
+    if (canvas.getContext("2d")) {
         context = canvas.getContext("2d");
-		lsys = new LSystem(context);   	
-  }
+        lsys = new LSystem(context);
+    }
 }
 
 
 function init() {
     reset();
+    onWindowResize();
     new_lsystem();
     onLSystemChange();
     setInterval(update, 33);
 }
 
 function update() {
-	lsys.draw(15);
+    lsys.draw(15);
 }
 
 
@@ -168,11 +157,14 @@ function clear_canvas() {
 }
 
 
+/*
+ * Reset the canvas
+ */
 function reset() {
     clear_canvas();
     /*
-    s = $('#slider').slider();
-    s.slider('value',0);
+      s = $('#slider').slider();
+      s.slider('value',0);
     */
 }
 
@@ -189,31 +181,35 @@ function remove_rules() {
     node = document.getElementById("rules");
     if (node.hasChildNodes()) {
         while (node.childNodes.length >= 1 ) {
-            node.removeChild(node.firstChild );       
-        } 
+            node.removeChild(node.firstChild );
+        }
     }
 }
 
-
-function add_rule(rule_text) {
+function add_rule(target, pattern) {
     current_rule += 1;
     name = "rule"+ current_rule;
     label = "Rule " + current_rule;
 
-    newLabel = document.createElement("label");
-    newLabel.setAttribute("for", name);
-    newLabel.innerHTML = label;
-    
-    newInput = document.createElement("input");
-    newInput.setAttribute("type", "text");
-    newInput.setAttribute("value", rule_text);
-    newInput.setAttribute("id", name);
-    newInput.setAttribute("size", "30");
-    
-    br = document.createElement("br");
-    
-    document.getElementById("rules").appendChild(newLabel);
-    document.getElementById("rules").appendChild(newInput);
-    document.getElementById("rules").appendChild(br);
+    $('<div class="rule" id="'+current_rule+'">').appendTo('#rules');
+        
+    new_target = document.createElement("input");
+    new_target.setAttribute("type", "text");
+    new_target.setAttribute("value", target);
+    new_target.setAttribute("id", name+"_target");
+    new_target.setAttribute("size", "1");
+    $('#'+current_rule).append(new_target);
+
+    $('#'+current_rule).append('<div class="sep">=></div>');
+
+    new_pattern = document.createElement("input");
+    new_pattern.setAttribute("type", "text");
+    new_pattern.setAttribute("value", pattern);
+    new_pattern.setAttribute("id", name+"_pattern");
+    new_pattern.setAttribute("size", "10");
+    $('#'+current_rule).append(new_pattern);
+
+    $('#'+current_rule).append('<a href="#" title="remove" class="edit" id="rule'+current_rule+'_remove">remove</a>');
+    $('#'+current_rule).append('<a href="#" title="edit" class="edit" onClick="edit_rule('+current_rule+');" id="rule'+current_rule+'_edit">edit</a>');
 }
 

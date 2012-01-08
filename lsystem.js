@@ -26,8 +26,8 @@ function LSystem (context) {
     
         this.rules = []
         for(i=1; i<=current_rule; i++) {
-            name = "rule"+i;
-            r = new Rule(document.getElementById(name).value);
+            //name = "rule"+i;
+            r = new Rule(i);
             this.rules.push(r);
         }
         
@@ -37,13 +37,16 @@ function LSystem (context) {
      * Read the parameters from the HTML page.
      */
     this.get_params = function() {
-        this.line_length = document.getElementById("length").value;
-        this.angle = parseInt(document.getElementById("angle").value);
-        this.starting_angle = parseInt(document.getElementById("starting_angle").value);
+        this.line_length = $('#length').slider('option', 'value');
+        this.angle = parseInt($('#angle').slider('option', 'value'));
+        this.starting_angle = parseInt($('#starting_angle').slider('option', 'value'));
+
         this.initial_string = document.getElementById("initial_string").value;
         this.current_string = document.getElementById("initial_string").value;
-        this.x = parseInt(document.getElementById("x").value);
-        this.y = parseInt(document.getElementById("y").value);
+
+        this.x = parseInt($('#xpos').slider('option', 'value'));
+        this.y = parseInt($('#ypos').slider('option', 'value'));
+
         this.current_iteration = 0;
         this.string_pos = 0;
         this.direction = this.starting_angle;
